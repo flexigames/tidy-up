@@ -12,7 +12,14 @@ public class PickupManager : MonoBehaviour
             var mouseRayCast = RayCastMouse();
             if (mouseRayCast != null) {
                 var mouseHit =  mouseRayCast.Value.point;
-                currentItem.transform.position = new Vector3(mouseHit.x, mouseHit.y + 0.06f, mouseHit.z);
+                var normal = mouseRayCast.Value.normal;
+                var pointingUp = normal.y > 0.9f;
+
+                if (pointingUp) {
+                    currentItem.transform.position = new Vector3(mouseHit.x, mouseHit.y + 0.07f, mouseHit.z);
+                } else {
+                    currentItem.transform.position = mouseHit + normal * 0.22f;
+                }
             }
         } 
         
