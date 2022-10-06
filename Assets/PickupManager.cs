@@ -5,21 +5,32 @@ using UnityEngine;
 public class PickupManager : MonoBehaviour
 {
     private GameObject currentItem;
+    private Vector3 itemSize;
 
     void Update() {
 
         if (currentItem != null) {
             var mouseRayCast = RayCastMouse();
             if (mouseRayCast != null) {
+                var colliderSize = currentItem.GetComponent<Collider>().bounds.size;
+
                 var mouseHit =  mouseRayCast.Value.point;
                 var normal = mouseRayCast.Value.normal;
                 var pointingUp = normal.y > 0.9f;
+                var pontingRight = normal.z > 0.9f;
+                var pointingLeft = normal.x < -0.9f;
+
+                var offset = new Vector3(0, 0, 0);
 
                 if (pointingUp) {
-                    currentItem.transform.position = new Vector3(mouseHit.x, mouseHit.y + 0.07f, mouseHit.z);
-                } else {
-                    currentItem.transform.position = mouseHit + normal * 0.22f;
+                    offset = new Vector3(0f, itemSize.y / 2f, 0f);
+                } else if (pontingRight) {
+                    offset = new Vector3(0f, 0f, itemSize.z / 2f);
+                } else if (pointingLeft) {
+                    offset = new Vector3(-itemSize.x / 2f, 0f, 0f);
                 }
+
+                currentItem.transform.position = mouseHit + offset;
             }
         } 
         
@@ -42,11 +53,13 @@ public class PickupManager : MonoBehaviour
     void DropObject() {
         currentItem.GetComponent<Collider>().enabled = true;
         currentItem = null;
+        itemSize = Vector3.zero;
     }
 
     void PickUpObject() {
         var hit = RayCastMouse();
         if (hit is RaycastHit theHit && theHit.collider.gameObject.tag == "Pickup") {
+            itemSize = theHit.collider.bounds.size;
             theHit.collider.enabled = false;
             currentItem = theHit.collider.gameObject;
             currentItem.transform.rotation = Quaternion.identity;
