@@ -51,6 +51,7 @@ public class PickupManager : MonoBehaviour
     }
 
     void DropObject() {
+        currentItem.GetComponent<Rigidbody>().isKinematic = false;
         currentItem.GetComponent<Collider>().enabled = true;
         currentItem = null;
         itemSize = Vector3.zero;
@@ -61,6 +62,8 @@ public class PickupManager : MonoBehaviour
         if (hit is RaycastHit theHit && theHit.collider.gameObject.tag == "Pickup") {
             itemSize = theHit.collider.bounds.size;
             theHit.collider.enabled = false;
+            theHit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+
             currentItem = theHit.collider.gameObject;
             currentItem.transform.rotation = Quaternion.identity;
         }
