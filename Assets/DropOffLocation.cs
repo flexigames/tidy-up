@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DropOffLocation : MonoBehaviour
 {
-    int numberOfPickUps;
+    int numberOfPickUps = 2;
     int countDropOffs;
 
     bool isDone = false;
@@ -12,9 +12,34 @@ public class DropOffLocation : MonoBehaviour
 
     public GameObject room;
 
+    public GameObject bookPrefab;
+
     void Start() {
-        var pickUps = GameObject.FindGameObjectsWithTag("Pickup");
-        numberOfPickUps = pickUps.Length;
+        SpawnBooks();
+    }
+
+    void SpawnBooks() {
+        for (int i = 0; i < numberOfPickUps; i++) {
+            SpawnBook();
+        }
+    }
+
+    void RemoveAllPickups() {
+        var books = GameObject.FindGameObjectsWithTag("Pickup");
+        foreach (var book in books) {
+            Destroy(book);
+        }
+    }
+
+    void SpawnBook() {
+        var x = Random.Range(-room.transform.localScale.x / 2f, room.transform.localScale.x / 2f);
+        var y = 7f;
+        var z = Random.Range(-room.transform.localScale.z / 2f, room.transform.localScale.z / 2f);
+
+        var position = new Vector3(x, y, z);
+
+        var book = Instantiate(bookPrefab, position, Quaternion.identity);
+        book.transform.parent = room.transform;
     }
 
     void Update() { 
@@ -25,6 +50,10 @@ public class DropOffLocation : MonoBehaviour
             }
 
             if (Input.GetMouseButtonDown(0)) {
+                RemoveAllPickups();
+                countDropOffs = 0;
+                numberOfPickUps++;
+                SpawnBooks();
                 rotateBack = true;
             }
         }
@@ -37,6 +66,10 @@ public class DropOffLocation : MonoBehaviour
                 isDone = false;
             }
         }
+    }
+
+    void OnEnd() {
+        RemoveAllPickups();
     }
 
     private void OnTriggerEnter(Collider other) {
