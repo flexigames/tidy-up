@@ -23,6 +23,13 @@ public class PickupManager : MonoBehaviour
                 DropObject();
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+            currentItem.transform.Rotate(0, -45, 0);
+        } 
+        if (Input.GetKeyDown(KeyCode.RightArrow)) {
+            currentItem.transform.Rotate(0, 45, 0);
+        }
     }
 
     void DropObject() {
@@ -35,6 +42,7 @@ public class PickupManager : MonoBehaviour
         if (hit is RaycastHit theHit && theHit.collider.gameObject.tag == "Pickup") {
             theHit.collider.enabled = false;
             currentItem = theHit.collider.gameObject;
+            currentItem.transform.rotation = Quaternion.identity;
         }
     }
 
