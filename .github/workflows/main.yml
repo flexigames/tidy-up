@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   ITCH_USERNAME: finnp
-  ITCH_GAME_ID: 630653
+  ITCH_GAME_ID: test
 
 jobs:
   build:
